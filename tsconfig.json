@@ -1,0 +1,27 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+      "es6", "dom"
+    ],
+    "types": [
+      "node"
+    ],
+    "typeRoots": [
+      "./types", "node_modules/@types"
+    ],
+    "outDir": "./lib",
+    "sourceMap": true,
+    "module": "commonjs",
+    "watch": true,
+    "moduleResolution": "node",
+    "isolatedModules": false,
+    "experimentalDecorators": true,
+    "declaration": true,
+    "suppressImplicitAnyIndexErrors": true
+  },
+  "include": [
+    "./src/**/*",
+  ]
+}
