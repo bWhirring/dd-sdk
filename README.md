@@ -13,5 +13,5 @@ usage
 ```
 import DDSdk from "@dwd/dd-sdk"
 
-const dd = new DD(appKey, appSecret")
+const dd = new DD(appKey, appSecret)
 ```

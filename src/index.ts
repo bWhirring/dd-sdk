@@ -281,7 +281,7 @@ class DDSdk {
   }
 
   /**
-   * 获取时间回调
+   * 获取事件回调
    * @param token access_token
    */
   async getCallBack(token?: string) {

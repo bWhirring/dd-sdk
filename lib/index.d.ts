@@ -123,7 +123,7 @@ declare class DDSdk {
         encrypt: any;
     };
     /**
-     * 获取时间回调
+     * 获取事件回调
      * @param token access_token
      */
     getCallBack(token?: string): Promise<any>;
