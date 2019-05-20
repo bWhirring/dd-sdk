@@ -5,7 +5,14 @@
 import axios from 'axios';
 import * as colors from 'colors';
 import DDCrypto from './crypto';
-import { ITask, IToken, ICrypto, IInstance, IMessage, IRegisterCallBack } from './interface';
+import {
+  ITask,
+  IToken,
+  ICrypto,
+  IInstance,
+  IMessage,
+  IRegisterCallBack
+} from './interface';
 
 const { log } = console;
 
@@ -126,7 +133,9 @@ class DDSdk {
     log(colors.green('===========查询部门的所有上级父部门路径'));
     token = token || (await this.getToken(token));
     const { data } = await axios(
-      `${this.oapi}/department/list_parent_depts_by_dept?access_token=${token}&id=${id}`
+      `${
+        this.oapi
+      }/department/list_parent_depts_by_dept?access_token=${token}&id=${id}`
     );
     return data;
   }
@@ -140,7 +149,9 @@ class DDSdk {
     log(colors.green('===========查询指定用户的所有上级父部门路径'));
     token = token || (await this.getToken(token));
     const { data } = await axios(
-      `${this.oapi}/department/list_parent_depts?access_token=${token}&userId=${userId}`
+      `${
+        this.oapi
+      }/department/list_parent_depts?access_token=${token}&userId=${userId}`
     );
     return data;
   }
@@ -154,14 +165,22 @@ class DDSdk {
     log(colors.green('===========获取企业员工人数'));
     token = token || (await this.getToken(token));
     const { data } = await axios(
-      `${this.oapi}/user/get_org_user_count?access_token=${token}&onlyActive=${onlyActive}`
+      `${
+        this.oapi
+      }/user/get_org_user_count?access_token=${token}&onlyActive=${onlyActive}`
     );
     return data;
   }
 
   /**
    * 发送工作消息
-   * @param data IMessage
+   * @param data IMessage {
+   *    @param agent_id: number; // 应用agent_id,
+   *    @param userid_list: string; // 可选(userid_list,dept_id_list, to_all_user必须有一个不能为空) 最大列表长度：100
+   *    @param dept_id_list?: string; // 接收者的部门id列表， 最大长度20
+   *    @param to_all_user?: boolean;  // 是否发送给企业全部用户
+   *    @param msg: object;  // json对象
+   * }
    * @param token access_token
    */
   async setWorkerMessage(data: IMessage, token?: string) {
@@ -170,14 +189,17 @@ class DDSdk {
     const res = await axios({
       url: `https://oapi.dingtalk.com/topapi/message/corpconversation/asyncsend_v2?access_token=${token}`,
       data,
-      method: 'POST',
+      method: 'POST'
     });
     return res.data;
   }
 
   /**
    * 查询工作通知消息的发送进度
-   * @param data ITask
+   * @param data ITask {
+   *    @param agent_id: number; // 应用agent_id,
+   *    @param task_id: number; // 发送消息时钉钉返回的任务id
+   * }
    * @param token access_token
    */
   async viewWorkerMessage(data: ITask, token?: string) {
@@ -186,14 +208,17 @@ class DDSdk {
     const res = await axios({
       url: `https://oapi.dingtalk.com/topapi/message/corpconversation/asyncsend_v2?access_token=${token}`,
       data,
-      method: 'POST',
+      method: 'POST'
     });
     return res.data;
   }
 
   /**
    * 查询工作通知消息的发送结果
-   * @param data ITask
+   * @param data ITask {
+   *   @param agent_id: number; // 应用agent_id,
+   *   @param task_id: number; // 发送消息时钉钉返回的任务id
+   * }
    * @param token access_token
    */
   async resultWorkerMessage(data: ITask, token?: string) {
@@ -202,14 +227,20 @@ class DDSdk {
     const res = await axios({
       url: `https://oapi.dingtalk.com/topapi/message/corpconversation/getsendresult?access_token=${token}`,
       data,
-      method: 'POST',
+      method: 'POST'
     });
     return res.data;
   }
 
   /**
    * 创建一个审批实例
-   * @param data
+   * @param data IInstance {
+   * @param  process_code: string; // 审批流的唯一码，process_code就在审批流编辑的页面URL中
+   * @param  originator_user_id: string;  // 审批实例发起人的userid
+   * @param  dept_id: number; // 发起人所在的部门，如果发起人属于根部门，传-1
+   * @param  approvers: string; // 审批人userid列表，最大列表长度：20。
+   * @param  form_component_values: any; // 审批流表单参数
+   * }
    * @param token access_token
    */
   async createProcessInstance(data: IInstance, token?: string) {
@@ -240,11 +271,12 @@ class DDSdk {
 
   /**
    * 注册审批回调
-   * @param data
-   * call_back_tag: string[]; 需要监听的事件类型
-   * token: 加解密需要用到的token;
-   * aes_key: 数据加密密钥。用于回调数据的加密，长度固定为43个字符，从a-z, A-Z, 0-9共62个字符中选取,您可以随机生成，ISV(服务提供商)推荐使用注册套件时填写的EncodingAESKey;
-   * url: 接收事件回调的url，必须是公网可以访问的url地址
+   * @param data IRegisterCallBack{
+   *    @param call_back_tag: string[]; 需要监听的事件类型
+   *    @param token: 加解密需要用到的token;
+   *    @param aes_key: 数据加密密钥。用于回调数据的加密，长度固定为43个字符，从a-z, A-Z, 0-9共62个字符中选取,您可以随机生成，ISV(服务提供商)推荐使用注册套件时填写的EncodingAESKey;
+   *    @param url: 接收事件回调的url，必须是公网可以访问的url地址
+   * }
    * @param token
    */
   async registerCallBack(data: IRegisterCallBack, token?: string) {
@@ -287,7 +319,9 @@ class DDSdk {
   async getCallBack(token?: string) {
     log(colors.green('===========查询工作通知消息的发送结果'));
     token = token || (await this.getToken(token));
-    const res = await axios(`https://oapi.dingtalk.com/call_back/get_call_back?access_token=${token}`);
+    const res = await axios(
+      `https://oapi.dingtalk.com/call_back/get_call_back?access_token=${token}`
+    );
     return res.data;
   }
 
@@ -298,10 +332,11 @@ class DDSdk {
   async deleteCallBack(token?: string) {
     log(colors.green('=========删除回调注册事件'));
     token = token || (await this.getToken(token));
-    const res = await axios(`https://oapi.dingtalk.com/call_back/delete_call_back?access_token=${token}`);
+    const res = await axios(
+      `https://oapi.dingtalk.com/call_back/delete_call_back?access_token=${token}`
+    );
     return res.data;
   }
-
 }
 
 export default DDSdk;
