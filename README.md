@@ -5,13 +5,13 @@
 install
 
 ```
-npm install @dwd/dd-sdk
+npm install dd-sdk
 ```
 
 usage
 
 ```
-import DDSdk from "@dwd/dd-sdk"
+import DDSdk from "dd-sdk"
 
 const dd = new DD(appKey, appSecret)
 ```
