@@ -5,7 +5,6 @@ import { ITask, IToken, ICrypto, IInstance, IMessage, IRegisterCallBack } from '
 declare class DDSdk {
     private appKey;
     private appSecret;
-    private oapi;
     /**
      * 实例化小程序
      * @param appKey 小程序appKey
@@ -152,4 +151,11 @@ declare class DDSdk {
      */
     deleteCallBack(token?: string): Promise<any>;
 }
+/**
+ * 授权登录
+ * @param accessKey 扫码登录应用的appId
+ * @param appSecret 扫码登录应用的appSecret
+ * @param code 临时授权码
+ */
+export declare function authEncrypto(accessKey: string, appSecret: string, code: string): Promise<any>;
 export default DDSdk;

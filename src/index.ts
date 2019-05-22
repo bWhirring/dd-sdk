@@ -4,6 +4,7 @@
 
 import axios from 'axios';
 import * as colors from 'colors';
+import * as crypto from 'crypto';
 import DDCrypto from './crypto';
 import {
   ITask,
@@ -16,10 +17,11 @@ import {
 
 const { log } = console;
 
+const OAPI = 'https://oapi.dingtalk.com';
+
 class DDSdk {
   private appKey: string;
   private appSecret: string;
-  private oapi: string = 'https://oapi.dingtalk.com';
   /**
    * 实例化小程序
    * @param appKey 小程序appKey
@@ -35,9 +37,9 @@ class DDSdk {
    */
   async getAccessToken(): Promise<IToken> {
     log(colors.green(`===========获取access_token`));
-    const { appKey, appSecret, oapi } = this;
+    const { appKey, appSecret } = this;
     const { data } = await axios(
-      `${oapi}/gettoken?appkey=${appKey}&appsecret=${appSecret}`
+      `${OAPI}/gettoken?appkey=${appKey}&appsecret=${appSecret}`
     );
     return data;
   }
@@ -63,7 +65,7 @@ class DDSdk {
     log(colors.green(`===========获取用户ID`));
     token = token || (await this.getToken(token));
     const { data } = await axios(
-      `${this.oapi}/user/getuserinfo?access_token=${token}&code=${code}`
+      `${OAPI}/user/getuserinfo?access_token=${token}&code=${code}`
     );
     return data;
   }
@@ -77,7 +79,7 @@ class DDSdk {
     log(colors.green(`===========获取用户信息`));
     token = token || (await this.getToken(token));
     const { data } = await axios(
-      `${this.oapi}/user/get?access_token=${token}&userid=${userid}`
+      `${OAPI}/user/get?access_token=${token}&userid=${userid}`
     );
     return data;
   }
@@ -91,7 +93,7 @@ class DDSdk {
     log(colors.green(`==========获取子部门列表`));
     token = token || (await this.getToken(token));
     const { data } = await axios(
-      `${this.oapi}/department/list_ids?access_token=${token}&id=${id}`
+      `${OAPI}/department/list_ids?access_token=${token}&id=${id}`
     );
     return data;
   }
@@ -105,7 +107,7 @@ class DDSdk {
     log(colors.green(`==========获取部门列表`));
     token = token || (await this.getToken(token));
     const { data } = await axios(
-      `${this.oapi}/department/list?access_token=${token}&id=${id}`
+      `${OAPI}/department/list?access_token=${token}&id=${id}`
     );
     return data;
   }
@@ -119,7 +121,7 @@ class DDSdk {
     log(colors.green(`==========获取部门列表`));
     token = token || (await this.getToken(token));
     const { data } = await axios(
-      `${this.oapi}/department/get?access_token=${token}&id=${id}`
+      `${OAPI}/department/get?access_token=${token}&id=${id}`
     );
     return data;
   }
@@ -133,9 +135,7 @@ class DDSdk {
     log(colors.green('===========查询部门的所有上级父部门路径'));
     token = token || (await this.getToken(token));
     const { data } = await axios(
-      `${
-        this.oapi
-      }/department/list_parent_depts_by_dept?access_token=${token}&id=${id}`
+      `${OAPI}/department/list_parent_depts_by_dept?access_token=${token}&id=${id}`
     );
     return data;
   }
@@ -149,9 +149,7 @@ class DDSdk {
     log(colors.green('===========查询指定用户的所有上级父部门路径'));
     token = token || (await this.getToken(token));
     const { data } = await axios(
-      `${
-        this.oapi
-      }/department/list_parent_depts?access_token=${token}&userId=${userId}`
+      `${OAPI}/department/list_parent_depts?access_token=${token}&userId=${userId}`
     );
     return data;
   }
@@ -165,9 +163,7 @@ class DDSdk {
     log(colors.green('===========获取企业员工人数'));
     token = token || (await this.getToken(token));
     const { data } = await axios(
-      `${
-        this.oapi
-      }/user/get_org_user_count?access_token=${token}&onlyActive=${onlyActive}`
+      `${OAPI}/user/get_org_user_count?access_token=${token}&onlyActive=${onlyActive}`
     );
     return data;
   }
@@ -187,7 +183,7 @@ class DDSdk {
     log(colors.green('===========发送工作通知消息'));
     token = token || (await this.getToken(token));
     const res = await axios({
-      url: `https://oapi.dingtalk.com/topapi/message/corpconversation/asyncsend_v2?access_token=${token}`,
+      url: `${OAPI}/topapi/message/corpconversation/asyncsend_v2?access_token=${token}`,
       data,
       method: 'POST'
     });
@@ -206,7 +202,7 @@ class DDSdk {
     log(colors.green('===========查询工作通知消息的发送进度'));
     token = token || (await this.getToken(token));
     const res = await axios({
-      url: `https://oapi.dingtalk.com/topapi/message/corpconversation/asyncsend_v2?access_token=${token}`,
+      url: `${OAPI}/topapi/message/corpconversation/asyncsend_v2?access_token=${token}`,
       data,
       method: 'POST'
     });
@@ -225,7 +221,7 @@ class DDSdk {
     log(colors.green('===========查询工作通知消息的发送结果'));
     token = token || (await this.getToken(token));
     const res = await axios({
-      url: `https://oapi.dingtalk.com/topapi/message/corpconversation/getsendresult?access_token=${token}`,
+      url: `${OAPI}/topapi/message/corpconversation/getsendresult?access_token=${token}`,
       data,
       method: 'POST'
     });
@@ -246,7 +242,7 @@ class DDSdk {
   async createProcessInstance(data: IInstance, token?: string) {
     token = token || (await this.getToken(token));
     const res = await axios.post(
-      `${this.oapi}/topapi/processinstance/create?access_token=${token}`,
+      `${OAPI}/topapi/processinstance/create?access_token=${token}`,
       data
     );
     return res.data;
@@ -261,7 +257,7 @@ class DDSdk {
     log(colors.green('===========获取审批实例'));
     token = token || (await this.getToken(token));
     const instance = await axios.post(
-      `${this.oapi}/topapi/processinstance/get?access_token=${token}`,
+      `${OAPI}/topapi/processinstance/get?access_token=${token}`,
       {
         process_instance_id: id
       }
@@ -283,7 +279,7 @@ class DDSdk {
     log(colors.green('===========获取审批实例'));
     token = token || (await this.getToken(token));
     const res = await axios.post(
-      `https://oapi.dingtalk.com/call_back/register_call_back?access_token=${token}`,
+      `${OAPI}/call_back/register_call_back?access_token=${token}`,
       data
     );
     return res.data;
@@ -320,7 +316,7 @@ class DDSdk {
     log(colors.green('===========查询工作通知消息的发送结果'));
     token = token || (await this.getToken(token));
     const res = await axios(
-      `https://oapi.dingtalk.com/call_back/get_call_back?access_token=${token}`
+      `${OAPI}/call_back/get_call_back?access_token=${token}`
     );
     return res.data;
   }
@@ -333,10 +329,32 @@ class DDSdk {
     log(colors.green('=========删除回调注册事件'));
     token = token || (await this.getToken(token));
     const res = await axios(
-      `https://oapi.dingtalk.com/call_back/delete_call_back?access_token=${token}`
+      `${OAPI}/call_back/delete_call_back?access_token=${token}`
     );
     return res.data;
   }
+}
+
+/**
+ * 授权登录
+ * @param accessKey 扫码登录应用的appId
+ * @param appSecret 扫码登录应用的appSecret
+ * @param code 临时授权码
+ */
+export async function authEncrypto(accessKey: string, appSecret: string, code: string) {
+  const timestamp = +new Date();
+  let signature = crypto
+    .createHmac('sha256', appSecret)
+    .update(`${timestamp}`)
+    .digest()
+    .toString('base64');
+  signature = encodeURIComponent(signature);
+
+  const URL = `${OAPI}/sns/getuserinfo_bycode?accessKey=${accessKey}&timestamp=${timestamp}&signature=${signature}`;
+  const res = await axios.post(URL, {
+    tmp_auth_code: code
+  });
+  return res.data;
 }
 
 export default DDSdk;
