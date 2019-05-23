@@ -1,6 +1,6 @@
 {
   "name": "dd-sdk",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "author": "HUHU<bianlongting@dianwoda.com>",
   "license": "MIT",
   "repository": {
@@ -11,7 +11,11 @@
     "start": "npx tsc"
   },
   "main": "./lib/index.js",
-  "keywords": ["钉钉", "dingtalk", "dd"],
+  "keywords": [
+    "钉钉",
+    "dingtalk",
+    "dd"
+  ],
   "dependencies": {
     "@types/colors": "^1.2.1",
     "@types/node": "^10.5.2",
