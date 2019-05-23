@@ -11,6 +11,7 @@
     "start": "npx tsc"
   },
   "main": "./lib/index.js",
+  "keywords": ["钉钉", "dingtalk", "dd"],
   "dependencies": {
     "@types/colors": "^1.2.1",
     "@types/node": "^10.5.2",
