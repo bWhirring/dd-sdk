@@ -158,4 +158,10 @@ declare class DDSdk {
  * @param code 临时授权码
  */
 export declare function authEncrypto(accessKey: string, appSecret: string, code: string): Promise<any>;
+/**
+ * 发送钉钉通知  消息类型 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
+ * @param access_token
+ * @param msg
+ */
+export declare function ddNotification(access_token: string, msg: any): Promise<any>;
 export default DDSdk;

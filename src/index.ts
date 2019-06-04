@@ -256,13 +256,13 @@ class DDSdk {
   async getProcessInstance(id: string, token?: string) {
     log(colors.green('===========获取审批实例'));
     token = token || (await this.getToken(token));
-    const instance = await axios.post(
+    const { data } = await axios.post(
       `${OAPI}/topapi/processinstance/get?access_token=${token}`,
       {
         process_instance_id: id
       }
     );
-    return instance.data;
+    return data;
   }
 
   /**
@@ -315,10 +315,10 @@ class DDSdk {
   async getCallBack(token?: string) {
     log(colors.green('===========查询工作通知消息的发送结果'));
     token = token || (await this.getToken(token));
-    const res = await axios(
+    const { data } = await axios(
       `${OAPI}/call_back/get_call_back?access_token=${token}`
     );
-    return res.data;
+    return data;
   }
 
   /**
@@ -328,10 +328,10 @@ class DDSdk {
   async deleteCallBack(token?: string) {
     log(colors.green('=========删除回调注册事件'));
     token = token || (await this.getToken(token));
-    const res = await axios(
+    const { data } = await axios(
       `${OAPI}/call_back/delete_call_back?access_token=${token}`
     );
-    return res.data;
+    return data;
   }
 }
 
@@ -341,7 +341,11 @@ class DDSdk {
  * @param appSecret 扫码登录应用的appSecret
  * @param code 临时授权码
  */
-export async function authEncrypto(accessKey: string, appSecret: string, code: string) {
+export async function authEncrypto(
+  accessKey: string,
+  appSecret: string,
+  code: string
+) {
   const timestamp = +new Date();
   let signature = crypto
     .createHmac('sha256', appSecret)
@@ -351,10 +355,27 @@ export async function authEncrypto(accessKey: string, appSecret: string, code: s
   signature = encodeURIComponent(signature);
 
   const URL = `${OAPI}/sns/getuserinfo_bycode?accessKey=${accessKey}&timestamp=${timestamp}&signature=${signature}`;
-  const res = await axios.post(URL, {
+  const { data } = await axios.post(URL, {
     tmp_auth_code: code
   });
-  return res.data;
+  return data;
+}
+
+/**
+ * 发送钉钉通知  消息类型 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
+ * @param access_token
+ * @param msg
+ */
+export async function ddNotification(access_token: string, msg: any) {
+  const { data } = await axios({
+    url: `${OAPI}/robot/send?access_token=${access_token}`,
+    data: msg,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    }
+  });
+  return data;
 }
 
 export default DDSdk;
