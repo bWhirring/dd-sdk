@@ -26,7 +26,7 @@ PKCS7Encoder.decode = (text) => {
  *
  * @param {String} text 需要进行填充补位操作的明文
  */
-PKCS7Encoder.encode = function(text) {
+PKCS7Encoder.encode = function (text) {
   const blockSize = 32;
   const textLength = text.length;
   // 计算需要填充的位数
@@ -66,12 +66,22 @@ function DDBizMsgCrypt(token, encodingAESKey, id) {
  * @param {String} nonce        随机数
  * @param {String} encrypt      加密后的文本
  */
-DDBizMsgCrypt.prototype.getSignature = function(timestamp, nonce, encrypt) {
+DDBizMsgCrypt.prototype.getSignature = function (timestamp, nonce, encrypt) {
   const shasum = crypto.createHash('sha1');
   const arr = [this.token, timestamp, nonce, encrypt].sort();
   shasum.update(arr.join(''));
 
-  return shasum.digest('hex');
+  const digest = shasum.digest();
+
+  let hexStr = "";
+  for (let i = 0; i < digest.length; i++) {
+    const shaHex = (digest[i] & 0xff).toString(16);
+    if (shaHex.length < 2) {
+      hexStr += "0";
+    }
+    hexStr += shaHex;
+  }
+  return hexStr;
 };
 
 /**
@@ -79,7 +89,7 @@ DDBizMsgCrypt.prototype.getSignature = function(timestamp, nonce, encrypt) {
  *
  * @param {String} text 待解密的密文
  */
-DDBizMsgCrypt.prototype.decrypt = function(text) {
+DDBizMsgCrypt.prototype.decrypt = function (text) {
   // 创建解密对象，AES采用CBC模式，数据采用PKCS#7填充；IV初始向量大小为16字节，取AESKey前16字节
   const decipher = crypto.createDecipheriv('aes-256-cbc', this.key, this.iv);
   decipher.setAutoPadding(false);
@@ -105,7 +115,7 @@ DDBizMsgCrypt.prototype.decrypt = function(text) {
  *
  * @param {String} text 待加密的明文
  */
-DDBizMsgCrypt.prototype.encrypt = function(text) {
+DDBizMsgCrypt.prototype.encrypt = function (text) {
   // 算法：AES_Encrypt[random(16B) + msg_len(4B) + msg + $CorpID]
   // 获取16B的随机字符串
   const randomString = crypto.pseudoRandomBytes(16);
